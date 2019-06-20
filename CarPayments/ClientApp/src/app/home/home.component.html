@@ -1,0 +1,63 @@
+<div [hidden]="submitted">
+  <p>Welcome to the Borrowing Repayment Calculator</p>
+  <form (ngSubmit)="onSubmit()" #carPaymentForm="ngForm">
+    <div class="form-group">
+      <label for="borrowAmount">Borrow Amount (£)</label>
+      <input placeholder="1000.00" type="number" class="form-control" id="borrowAmount" name="borrowAmount" required [(ngModel)]="model.BorrowAmount" (blur)="SetDefaultDeposit(BorrowAmount.value)"
+             #BorrowAmount="ngModel">
+      <div [hidden]="BorrowAmount.valid || BorrowAmount.pristine"
+           class="alert alert-danger">
+        BorrowAmount is required as a valid number
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="depositAmount">Deposit Amount (£)</label>
+      <input placeholder="150.00" type="number" class="form-control" id="depositAmount" name="depositAmount" required [(ngModel)]="model.DepositAmount" (keyup)="CheckIfDepositIsEnough(DepositAmount.value)"
+             #DepositAmount="ngModel">
+      <div [hidden]="DepositAmount.valid || DepositAmount.pristine"
+           class="alert alert-danger">
+        Deposit Amount is required as a valid number
+      </div>
+      <div [hidden]="IsGreaterThan15PerCent"
+           class="alert alert-danger">
+        Deposit Amount must be 15% of borrowing amount
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="deliveryDate">Delivery Date</label>
+      <input type="date" class="form-control" id="deliveryDate" name="deliveryDate" required [(ngModel)]="model.DeliveryDate"
+             #DeliveryDate="ngModel">
+      <div [hidden]="DeliveryDate.valid || DeliveryDate.pristine"
+           class="alert alert-danger">
+        Delivery Date is required as a valid date
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="intervalYears">Interval of Loan (Years)</label>
+      <input placeholder="1" type="number" class="form-control" id="intervalYears" name="intervalYears" required [(ngModel)]="model.YearsOfAgreement"
+             #YearsOfAgreement="ngModel">
+      <div [hidden]="YearsOfAgreement.valid || YearsOfAgreement.pristine"
+           class="alert alert-danger">
+        Interval of Years is required as a valid number
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success" [disabled]="!carPaymentForm.form.valid||!IsGreaterThan15PerCent">Submit</button>
+  </form>
+</div>
+<div *ngIf="resultList!=undefined">
+  <table class="table table-striped table-responsive-md">
+    <thead>
+      <th>Date Payments Due</th>
+      <th>Date Payments Amount</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of resultList">
+        <td>{{result.RepaymentDate | date:'longDate' }}</td>
+        <td>£{{result.RepaymentAmount}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button [hidden]="!submitted" class="btn btn-success" (click)="submitted=false;">Back</button> 
+</div>
